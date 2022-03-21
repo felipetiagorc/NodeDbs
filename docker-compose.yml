@@ -1,0 +1,61 @@
+version: '3'
+services:
+  postgres:
+    image: postgres
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: 'fe'
+      POSTGRES_PASSWORD: 'fe2022'
+      POSTGRES_DB: 'heros'
+    networks:
+      - pgnet
+
+  mongo:
+    image: mongo
+    ports:
+      - '27017:27017'
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: 'admin'
+      MONGO_INITDB_ROOT_PASSWORD: 'senhaadmin'
+      MONGO_INITDB_DATABASE: 'heros'
+    networks:
+      - mongonet
+
+  adminer:
+    image: adminer
+    ports:
+      - '8080:8080'
+    depends_on:
+      - postgres
+    networks:
+      - pgnet
+
+  mongoclient:
+    image: mongoclient/mongoclient
+    ports:
+      - '8081:3000'
+    depends_on:
+      - mongo
+    environment:
+      STARTUP_DELAY: 10
+      MONGO_URL: 'mongodb://root:root@mongo:27017/admin'
+    networks:
+      - mongonet
+
+networks:
+  pgnet:
+  mongonet:
+
+  api:
+    image: node:latest
+    container_name: api
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - '8080:8080'
+    depends_on:
+      - postgres
+    networks:
+      - pgnet
