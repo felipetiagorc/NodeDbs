@@ -1,6 +1,7 @@
-version: '3'
+version: '3.7'
 services:
   postgres:
+    container_name: postgres
     image: postgres
     ports:
       - '5432:5432'
@@ -12,17 +13,26 @@ services:
       - pgnet
 
   mongo:
+    container_name: mongodb
     image: mongo
     ports:
       - '27017:27017'
     environment:
       MONGO_INITDB_ROOT_USERNAME: 'admin'
       MONGO_INITDB_ROOT_PASSWORD: 'senhaadmin'
-      MONGO_INITDB_DATABASE: 'heros'
+      MONGO_INITDB_DATABASE: 'herois'
+      MONGO_INITDB_USERNAME: 'felipe'
+      MONGO_INITDB_PASSWORD: 'fe2022'
+      # MONGO_INITDB_PASSWORD_FILE: /run/secrets/mongo-user-passwd
+      # MONGO_INITDB_DATABASE: $MONGO_D
+    volumes:
+      - ./init-mongo.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+
     networks:
       - mongonet
 
   adminer:
+    container_name: adminer
     image: adminer
     ports:
       - '8080:8080'
@@ -32,30 +42,32 @@ services:
       - pgnet
 
   mongoclient:
+    container_name: mongoclient
     image: mongoclient/mongoclient
     ports:
-      - '8081:3000'
+      - '3000:3000'
     depends_on:
       - mongo
     environment:
       STARTUP_DELAY: 10
-      MONGO_URL: 'mongodb://root:root@mongo:27017/admin'
+      # MONGO_URL: 'mongodb://root:root@mongo:27017/admin'
     networks:
       - mongonet
+   
 
 networks:
   pgnet:
   mongonet:
 
-  api:
-    image: node:latest
-    container_name: api
-    restart: always
-    env_file:
-      - .env
-    ports:
-      - '8080:8080'
-    depends_on:
-      - postgres
-    networks:
-      - pgnet
+  # api:
+  #   image: node:latest
+  #   container_name: api
+  #   restart: always
+  #   env_file:
+  #     - .env
+  #   ports:
+  #     - '8080:8080'
+  #   depends_on:
+  #     - postgres
+  #   networks:
+  #     - pgnet
