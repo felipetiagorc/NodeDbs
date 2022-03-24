@@ -1,3 +1,5 @@
+
+
 const Mongoose = require('mongoose')
 
 const connectionState = {
@@ -51,3 +53,4 @@ async function main(){
     const listItem = await model.find()
     console.log('itens', listItem)
 }
+main()

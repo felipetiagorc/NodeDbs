@@ -1,9 +1,4 @@
-/** 
- * Esse script é executado em um ambiente shell
- *  mongo assim que o contêiner é criado.
- */ 
- 
-db.auth('admin-user', 'admin-password')
+db.auth('admin', 'senhaadmin')
 
 db = db.getSiblingDB('herois')
 

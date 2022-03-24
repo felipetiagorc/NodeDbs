@@ -20,14 +20,12 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: 'admin'
       MONGO_INITDB_ROOT_PASSWORD: 'senhaadmin'
-      MONGO_INITDB_DATABASE: 'herois'
       MONGO_INITDB_USERNAME: 'felipe'
       MONGO_INITDB_PASSWORD: 'fe2022'
-      # MONGO_INITDB_PASSWORD_FILE: /run/secrets/mongo-user-passwd
-      # MONGO_INITDB_DATABASE: $MONGO_D
-    volumes:
-      - ./init-mongo.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
 
+    volumes:
+      - ./.docker/init-mongo.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    #  TODO: desconbrir pq isso nao funciona
     networks:
       - mongonet
 
@@ -53,7 +51,6 @@ services:
       # MONGO_URL: 'mongodb://root:root@mongo:27017/admin'
     networks:
       - mongonet
-   
 
 networks:
   pgnet:
