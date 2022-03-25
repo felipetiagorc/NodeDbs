@@ -12,8 +12,9 @@ class ContextStrategy extends ICrud {
         return this._database.create(item)
     }
 
-    read(item){
-        return this._database.read(item)
+    // aqui torna obrigatoria a paginacao:
+    read(item, skip, limit){
+        return this._database.read(item, skip, limit)
     }
 
     update(id, item){
