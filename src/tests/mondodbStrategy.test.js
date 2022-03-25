@@ -1,10 +1,15 @@
 const assert = require('assert')
-const Mongodb = require('../db/strategies/mongodb')
-const Context = require('../db/strategies/base/contextStrategy')
 const MongoDB = require('../db/strategies/mongodb')
+const Context = require('../db/strategies/base/contextStrategy')
 
-const context = new Context(new Mongodb())
-describe('Mongodb Suite de testes', function(){
+
+const MOCK_HEROI_CADASTRAR = {
+    nome: "Mulher Maravilha",
+    poder: "Laço"
+}
+
+const context = new Context(new MongoDB())
+describe('MongoDB Suite de testes', function(){
     this.beforeAll(async ()=>{
         await context.connect()
     })
@@ -13,5 +18,10 @@ describe('Mongodb Suite de testes', function(){
         const expected = 'Connected'
 
         assert.deepEqual(result, expected)
+    })
+
+    it('cadastrar', async()=>{
+        const {nome, poder} = await context.create(MOCK_HEROI_CADASTRAR)
+        assert.deepEqual({nome, poder}, MOCK_HEROI_CADASTRAR)
     })
 })

@@ -11,7 +11,7 @@ const STATUS = {
 
 class MongoDB extends ICrud {
   constructor() {
-    super();
+    super()
     this._herois = null
     this._driver = null
   }
@@ -25,9 +25,7 @@ class MongoDB extends ICrud {
   }
 
   defineModel() {
-
-
-       const heroiSchema = new Mongoose.Schema({
+      const heroiSchema = new Mongoose.Schema({
         nome: {
             type: String,
             required: true
@@ -42,12 +40,16 @@ class MongoDB extends ICrud {
         }
     })
     
-    this._herois = Mongoose.model('herois', heroiSchema)
+    try {
+      this._herois = Mongoose.model('herois')      
+    } catch (error) {
+      this._herois = Mongoose.model('herois', heroiSchema)      
+    }
+    
   }
 
 //   conexão
   connect() {
-
     Mongoose.connect(
       'mongodb://felipe:fe2022@localhost:27017/herois',
       {
@@ -68,17 +70,14 @@ class MongoDB extends ICrud {
     const connection = Mongoose.connection;
     this._driver = connection
     connection.once('open', () => console.log('Database rodando!'));
-
+    this.defineModel()
   }
 
 
-  async create(item) {
-    const resultCadastrar = await model.create({
-        nome: 'Batman',
-        poder: 'dinheiro'
-    })
-    console.log('result cadastrar', resultCadastrar)    
+  create(item) {
+    return this._herois.create(item)
   }
 }
 
 module.exports = MongoDB;
+
