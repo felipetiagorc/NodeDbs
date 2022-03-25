@@ -11,8 +11,7 @@ const connectionState = {
   }
 
 Mongoose.connect('mongodb://felipe:fe2022@localhost:27017/herois', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
+    useNewUrlParser: true 
 }, function (error){
     if(!error) return;
 

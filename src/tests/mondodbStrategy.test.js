@@ -1,7 +1,7 @@
 const assert = require('assert')
-const MongoDB = require('../db/strategies/mongodb')
+const MongoDB = require('../db/strategies/mongodb/mongodb')
+const HeroiSchema = require('./../db/strategies/mongodb/schemas/heroisSchema')
 const Context = require('../db/strategies/base/contextStrategy')
-const { isRegExp } = require('util/types')
 
 
 const MOCK_HEROI_CADASTRAR = {
@@ -18,10 +18,17 @@ const MOCK_HEROI_ATUALIZAR = {
 }
 
 let MOCK_HEROI_ID = ''
-const context = new Context(new MongoDB())
+
+let context = {}
+
+// fazia a conexao fora:
+// const context = new Context(new MongoDB())
+
 describe('MongoDB Suite de testes', function(){
     this.beforeAll(async ()=>{
-        await context.connect()
+        const connection = MongoDB.connect()
+        // agora o mongodb recebe a connection, e o schema:
+        context = new Context(new MongoDB(connection, HeroiSchema))
         await context.create(MOCK_HEROI_DEFAULT)
         const result = await context.create(MOCK_HEROI_ATUALIZAR)
         MOCK_HEROI_ID = result._id;
@@ -50,11 +57,15 @@ describe('MongoDB Suite de testes', function(){
     })
     
     it('atualizar', async()=>{
-        console.log('MOCK_HEROI_ID: ', MOCK_HEROI_ID);
         const result = await context.update(MOCK_HEROI_ID, {
             nome: 'Pernalonga'
         })
-        assert.deepEqual(result.nModified, 1)
+        assert.deepEqual(result.modifiedCount, 1)
+    })
+
+    it('removerDoBanco', async ()=>{
+        const result = await context.delete(MOCK_HEROI_ID)
+        assert.deepEqual(result.deletedCount, 1)
     })
 
 
