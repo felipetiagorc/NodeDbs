@@ -5,7 +5,7 @@ const HeroiSchema = require('../db/strategies/mongodb/schemas/heroisSchema');
 const HeroRoute = require('./../routes/heroRoutes')
 
 const app = new Hapi.Server({
-  port: 5000,
+  port: 5001,
 });
 
 //esse cara vai mapear as rotas
