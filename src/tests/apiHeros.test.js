@@ -15,6 +15,7 @@ describe.only('Suite de Teste Hapi', function(){
         })
         const dados = JSON.parse(result.payload)
         const statusCode = result.statusCode
+        
         assert.deepEqual(statusCode, 200)
         assert.ok(Array.isArray(dados))
     })

@@ -37,7 +37,12 @@ async function main() {
 //     },
 //   });
 
-    app.route([
+/** Até agora temos isso:
+ * [list(), create(), read()] 
+ * temos que destruturar pra não virar array de arrays:
+ *  */   
+app.route([
+    ...mapRoutes(new HeroRoute(context), HeroRoute.methods())
            ])
    
   await app.start();
