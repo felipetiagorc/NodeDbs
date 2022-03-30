@@ -58,6 +58,8 @@ describe('Suite de Teste Hapi', function(){
             method: 'GET',
             url: `/herois?skip=0&limit=${TAMANHO_LIMITE}`
         })
+        
+        console.log('result: ', result);
 
         const erroResult = {
             "statusCode":400,
@@ -67,6 +69,8 @@ describe('Suite de Teste Hapi', function(){
                 "source":"query",
                 "keys":["limit"]
             }
+
+   
         }
 
         assert.deepEqual(result.statusCode, 400)
@@ -74,8 +78,8 @@ describe('Suite de Teste Hapi', function(){
 
     })
 
-    it.skip('listar /herois - deve filtrar um item', async ()=>{
-        const NAME = 'Homem Aranha-1648228569642'
+    it('listar /herois - deve filtrar um item', async ()=>{
+        const NAME = MOCK_HEROI_INICIAL.nome
         const result = await app.inject({
             method: 'GET',
             url: `/herois?skip=0&limit=1000&nome=${NAME}`
