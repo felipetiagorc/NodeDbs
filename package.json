@@ -4,10 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha src/tests/*.js",
+    "test": "mocha src/tests/*.js -w",
     "test:watch": "mocha src/tests/*.js -w"
   },
   "dependencies": {
+    "@hapi/boom": "^9.1.4",
     "@hapi/hapi": "^20.2.1",
     "joi": "^17.6.0",
     "mongoose": "^6.2.8",
