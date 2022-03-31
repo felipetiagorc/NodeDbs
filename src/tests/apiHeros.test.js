@@ -2,6 +2,7 @@ const assert = require('assert')
 const api = require('./../api/api')
 
 let app = {}
+const TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Inh1eGFkYXNpbHZhIiwiaWQiOjEsImlhdCI6MTY0ODY5MjAyNn0.JTpMW-EOgyLU8yXj1EmEKL2kFhLNFoK2gW779Z_bIvs'
 
 const MOCK_HEROI_CADASTRAR = {
     nome: 'Chapolin Colorado',

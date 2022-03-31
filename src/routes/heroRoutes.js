@@ -1,11 +1,18 @@
 const Joi = require('joi');
 const Boom = require('@hapi/boom')
 const BaseRoute = require('./base/baseRoute')
-
-
 const failAction = (request, headers, erro) => {
     throw erro;
 };
+
+/** 
+ * Todas rotas usam esse header pra validar se o corpo da requisicao ta com o 
+ * objeto conforme a necessidade. 
+*/
+
+const headers = Joi.object({
+    authorization: Joi.string().required()
+}).unknown()
 
 class HeroRoutes extends BaseRoute {
     constructor(db) {
@@ -33,7 +40,8 @@ class HeroRoutes extends BaseRoute {
                         skip: Joi.number().integer().default(0),
                         limit: Joi.number().integer().default(5),
                         nome: Joi.string().min(3).max(100).default('')
-                    })
+                    }),
+                    headers,
                 }
             },
             handler: (request, headers) => {
@@ -68,6 +76,7 @@ class HeroRoutes extends BaseRoute {
                 notes: 'cadastrar com nome e poder',
                 validate: {
                     failAction,
+                    headers,
                     payload: Joi.object({
                         nome: Joi.string().required().min(3).max(100),
                         poder: Joi.string().required().min(2).max(20),
@@ -103,6 +112,7 @@ class HeroRoutes extends BaseRoute {
                     params: Joi.object({
                         id: Joi.string().required()
                     }),
+                    headers,
                     payload: Joi.object({
                         nome: Joi.string().min(3).max(100),
                         poder: Joi.string().min(2).max(20)
@@ -149,7 +159,8 @@ class HeroRoutes extends BaseRoute {
                           failAction,
                     params: Joi.object({
                         id: Joi.string().required()
-                    })
+                    }),
+                    headers,
                 }
             },
             handler: async (request) =>{
