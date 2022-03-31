@@ -8,26 +8,27 @@ const Inert = require('@hapi/inert')
 const HeroRoute = require('./../routes/heroRoutes')
 const AuthRoute = require('./../routes/authRoutes')
 const JWT_SECRET = 'MEU_SEGREDAO_123'
-const HapiJwt = require('hapi-auth-jwt2')
+const HapiJwt = require('@hapi/jwt')
+
 
 const app = new Hapi.Server({
   port: 5001,
 });
 
 //esse cara vai mapear as rotas
-function mapRoutes(instance, methods){
-    /**
-     * do filtro das rotas, vai vir um array: 
-     * ['list','create','update']
-     * 
-     * * Instancia a classe, com o método mapeado, e executa ele ()
-     * new HeroRoute()['list]()
-     * é a mesma coisa que:
-     * new HeroRoute().list()
-     * só q vamos fazer dinamicamente, conforme o param passado
-     
-     */
-    return methods.map(method => instance[method]())
+function mapRoutes(instance, methods) {
+  /**
+   * do filtro das rotas, vai vir um array: 
+   * ['list','create','update']
+   * 
+   * * Instancia a classe, com o método mapeado, e executa ele ()
+   * new HeroRoute()['list]()
+   * é a mesma coisa que:
+   * new HeroRoute().list()
+   * só q vamos fazer dinamicamente, conforme o param passado
+   
+   */
+  return methods.map(method => instance[method]())
 
 }
 
@@ -58,27 +59,57 @@ async function main() {
   ]);
 
   app.auth.strategy('jwt', 'jwt', {
-    key: JWT_SECRET,
+    keys: {
+      key: JWT_SECRET,
+      algorithms: ['HS256']
+    },
+    verify: {
+      aud: false,
+      iss: false,
+      sub: false,
+      nbf: true,
+      exp: true,
+      maxAgeSec: 14400, // 4 hours
+      timeSkewSec: 15
+  },
     // options:{
     //   expiresIn: 20
     // },
-    validate: async(dado, request) => {
-      //verifica no banco se o user continua ativo / ou pagando / ou online
-      isValid: true
+    validate: (artifacts, request, h) => {
+
+      if (artifacts.decoded.payload.user === 'help') {
+          return { response: h.redirect('https://hapi.dev/module/jwt/') }; // custom response
+      }
+  
+      if (artifacts.decoded.payload.user === 'crash') {
+          throw new Error('We hit a tree!'); // custom message in Boom.unauthorized
+      }
+  
+      let isValid;
+      if (artifacts.decoded.payload.group === 'hapi_community') {
+          isValid = true;
+      }
+      else {
+          isValid = false;
+      }
+      return {
+        isValid: true,
+        credentials: { user: artifacts.decoded.payload.user }
+      }
     }
   })
   // aqui "intercepta"? ativa a strategy auth jwt - vai quebrar todos testes velhos
   app.auth.default('jwt')
 
-/** Até agora temos isso:
- * [list(), create(), read()] 
- * temos que destruturar pra não virar array de arrays, pq o route() tbm retorna array:
- *  */   
-app.route([
-  ...mapRoutes(new HeroRoute(context), HeroRoute.methods()),
-  ...mapRoutes(new AuthRoute(JWT_SECRET), AuthRoute.methods())
-])
-   
+  /** Até agora temos isso:
+   * [list(), create(), read()] 
+   * temos que destruturar pra não virar array de arrays, pq o route() tbm retorna array:
+   *  */
+  app.route([
+    ...mapRoutes(new HeroRoute(context), HeroRoute.methods()),
+    ...mapRoutes(new AuthRoute(JWT_SECRET), AuthRoute.methods())
+  ])
+
   await app.start();
   console.log('Servidor rodando na porta', app.info.port);
   app.events.on('log', formatLogEvent)

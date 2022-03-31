@@ -1,7 +1,7 @@
 const Joi = require('joi');
 const Boom = require('@hapi/boom')
 const BaseRoute = require('./base/baseRoute')
-const Jwt = require('jsonwebtoken')
+const Jwt = require('@hapi/jwt')
 const failAction = (request, headers, erro) => {
     throw erro;
 };
@@ -44,12 +44,22 @@ class AuthRoutes extends BaseRoute {
                      )
                         return Boom.unauthorized()
                     
-                    const token = Jwt.sign({
-                        username: username,
-                        id: 1
-                    }, this.secret)
-                    
-                    return {token}
+                    const token = Jwt.token.generate(
+                    {
+                        aud: false,
+                        iss: false,
+                        user: username,
+                        id: 1,
+                        group: 'hapi_c'
+                    }, 
+                    {
+                        key: this.secret,
+                        algorithm: 'HS512'
+                    },
+                    );
+
+                    const decodedToken = Jwt.token.decode(token);
+                    return {decodedToken}
 
                 } catch (error) {
                     console.log('DEU RUIM: ', error);
